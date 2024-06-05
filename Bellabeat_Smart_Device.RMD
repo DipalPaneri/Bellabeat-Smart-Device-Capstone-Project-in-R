@@ -1,0 +1,355 @@
+---
+title: "Bellabeat_case_study"
+author: "Dipal Paneri"
+date: "June 6, 2024"
+output:
+  html_document: default
+---
+
+```{r include=FALSE}
+chooseCRANmirror(graphics=FALSE, ind=1)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Installing Packages}
+install.packages("tidyverse")
+install.packages("dplyr")
+install.packages("tidyr")
+install.packages("lubridate")
+install.packages("ggplot2")
+```
+
+```{r loading the packages }
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+```
+
+![Logo](G:\Project With R\bellabeat_data\Fitabase Data 4.12.16-5.12.16\Bellabeat.png)
+
+##Introduction
+Welcome to the Bellabeat data analysis case study! In this case study, You will perform many real-world tasks of a junior data analyst. You will imagine you are working for Bellabeat, a high-tech manufacturer of health-focused products for women, and meet different characters and team members. In order to answer the key business questions, you will follow the steps of the data analysis process: ask, prepare, process, analyze, share, and act. Along the way, the Case Study Roadmap tables — including guiding questions and key tasks — will help you stay on the right path.
+
+###Scenario
+You are a junior data analyst working on the marketing analyst team at Bellabeat, a high-tech manufacturer of health-focused products for women. Bellabeat is a successful small company, but they have the potential to become a larger player in the global smart device market. Urška Sršen, cofounder and Chief Creative Officer of Bellabeat, believes that analyzing smart device fitness data could help unlock new growth opportunities for the company. You have been asked to focus on one of Bellabeat’s products and analyze smart device data to gain insight into how consumers are using their smart devices. The insights you discover will then help guide marketing strategy for the company. You will present your analysis to the Bellabeat executive team along with your high-level recommendations for Bellabeat’s marketing strategy. 
+
+### Stakeholders 
+○ Urška Sršen: Bellabeat’s cofounder and Chief Creative Officer
+○ Sando Mur: Mathematician and Bellabeat’s cofounder; key member of the Bellabeat executive team
+○ Bellabeat marketing analytics team: A team of data analysts responsible for collecting, analyzing, and reporting data that helps guide Bellabeat’s marketing strategy. You joined this team six months ago and have been busy learning about Bellabeat’’s mission and business goals — as well as how you, as a junior data analyst, can help Bellabeat achieve them.
+
+###Products
+1 Bellabeat app: The Bellabeat app provides users with health data related to their activity, sleep, stress, menstrual cycle, and mindfulness habits. This data can help users better understand their current habits and make healthy decisions. The Bellabeat app connects to their line of smart wellness products.
+2 Leaf: Bellabeat’s classic wellness tracker can be worn as a bracelet, necklace, or clip. The Leaf tracker connects
+to the Bellabeat app to track activity, sleep, and stress.
+3 Time: This wellness watch combines the timeless look of a classic timepiece with smart technology to track user
+activity, sleep, and stress. The Time watch connects to the Bellabeat app to provide you with insights into your
+daily wellness.
+4 Spring: This is a water bottle that tracks daily water intake using smart technology to ensure that you are
+appropriately hydrated throughout the day. The Spring bottle connects to the Bellabeat app to track your
+hydration levels.
+5 Bellabeat membership: Bellabeat also offers a subscription-based membership program for users.
+Membership gives users 24/7 access to fully personalized guidance on nutrition, activity, sleep, health and
+beauty, and mindfulness based on their lifestyle and goals.
+
+##About the company
+Urška Sršen and Sando Mur founded Bellabeat, a high-tech company that manufactures health-focused smart products. Sršen used her background as an artist to develop beautifully designed technology that informs and inspires women around the world. Collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women with knowledge about their own health and habits. Since it was founded in 2013, Bellabeat has grown rapidly and quickly positioned itself as a tech-driven wellness company for women.
+
+By 2016, Bellabeat had opened offices around the world and launched multiple products. Bellabeat products became available through a growing number of online retailers in addition to their own e-commerce channel on their website. The company has invested in traditional advertising media, such as radio, out-of-home billboards, print, and television, but focuses on digital marketing extensively. Bellabeat invests year-round in Google Search, maintaining active Facebook and Instagram pages, and consistently engages consumers on Twitter. Additionally, Bellabeat runs video ads on Youtube and display ads on the Google Display Network to support campaigns around key marketing dates.
+
+Sršen knows that an analysis of Bellabeat’s available consumer data would reveal more opportunities for growth. She has asked the marketing analytics team to focus on a Bellabeat product and analyze smart device usage data in order to gain insight into how people are already using their smart devices. Then, using this information, she would like high-level recommendations for how these trends can inform Bellabeat marketing strategy.
+
+##Ask
+Sršen asks you to analyze smart device usage data in order to gain insight into how consumers use non-Bellabeat smart devices. She then wants you to select one Bellabeat product to apply these insights to in your presentation. These questions will guide your analysis:
+1. What are some trends in smart device usage?
+2. How could these trends apply to Bellabeat customers?
+3. How could these trends help influence Bellabeat marketing strategy?
+
+##Prepare
+Sršen encourages you to use public data that explores smart device users’ daily habits. She points you to a specific data set:
+* FitBit Fitness Tracker Data (CC0: Public Domain, dataset made available through Mobius): This Kaggle data set contains personal fitness tracker from thirty fitbit users. Thirty eligible Fitbit users consented to the submission of personal tracker data, including minute-level output for physical activity, heart rate, and sleep monitoring. It includes information about daily activity, steps, and heart rate that can be used to explore users’ habits.
+Sršen tells you that this data set might have some limitations, and encourages you to consider adding another data to help address those limitations as you begin to work more with this data.
+
+```{r Data Collection and Importing files }
+daily_activity <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv")
+hr_calories <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/hourlyCalories_merged.csv")
+hr_intensity <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/hourlyIntensities_merged.csv")
+daily_sleep <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/sleepDay_merged.csv")
+weight_log <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/weightLogInfo_merged.csv")
+MET <- read_csv("G:/Project With R/bellabeat_data/Fitabase Data 4.12.16-5.12.16/minuteMETsNarrow_merged.csv")
+```
+#### Check the Files, verify the data types, format, Structure of data, COlumn names and Data Profiling 
+```{r}
+glimpse(daily_activity)
+head(hr_calories)
+View(daily_sleep)
+View(weight_log)
+```
+
+##Process
+Then, process your data for analysis using the following Case Study Roadmap as a guide:
+Case Study Roadmap - Process
+Guiding questions
+● What tools are you choosing and why?
+● Have you ensured your data’s integrity?
+● What steps have you taken to ensure that your data is clean?
+● How can you verify that your data is clean and ready to analyze?
+● Have you documented your cleaning process so you can review and share those results?
+Key tasks
+1. Check the data for errors.
+2. Choose your tools.
+3. Transform the data so you can work with it effectively.
+4. Document the cleaning process.
+
+```{r check for distinct consented participants for Each Phase of Activities}
+
+n_distinct(daily_activity$Id) # recorded daily activity
+n_distinct(hr_calories$Id)    # hourly calories
+n_distinct(hr_intensity$Id)   # hourly intensities
+n_distinct(daily_sleep$Id)    # daily sleep
+n_distinct(weight_log$Id)     # body weight log
+```
+There are 33 people participated in Daily Activity data, 33 people consnted in Hourly calories and so is in Hourly intensities activities, 24 people participated in Daily Sleep  while only 8 people participated in weight Log.
+As the Weight Log data is limited set, It will not help derive accurate results for the analysis.
+
+####Next step is to Handling Duplicates
+```{r}
+sum(duplicated(daily_activity))
+sum(duplicated(daily_sleep))
+sum(duplicated(hr_calories))
+sum(duplicated(hr_intensity))
+sum(duplicated(weight_log))
+```
+Only daily_Sleep has 3 duplicate values which needs to be handled before analysis.
+
+####Removing Duplicates
+```{r}
+daily_sleep <- daily_sleep %>%
+  distinct() %>%
+  drop_na()
+```
+
+verify if rhe duplicates are removed succesfully.
+```{r}
+sum(duplicated(daily_sleep))
+```
+
+## Data Profiling 
+```{r with Head(), echo=TRUE}
+## 1. daily activity 
+head(daily_activity)
+nrow(daily_activity)
+ncol(daily_activity)
+
+# 2. daily sleep
+head(daily_sleep)
+nrow(daily_sleep)
+ncol(daily_sleep)
+
+# 3. hourly calories 
+head(hr_calories)
+nrow(hr_calories)
+ncol(hr_calories)
+
+# 4. hourly intensity
+head(hr_intensity)
+nrow(hr_intensity)
+ncol(hr_intensity)
+```
+
+#####The timestamp data needs to be converted into datetime format and then potentially split into individual date and time variables.
+```{r Normalization - changing timestamp data into an appropriate standard format for all the tables }
+daily_activity$ActivityDate <- as.POSIXct(daily_activity$ActivityDate, format = "%m/%d/%y", tz=Sys.timezone())
+hr_intensity$ActivityHour <- as.POSIXct(hr_intensity$ActivityHour, format = "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+hr_calories$ActivityHour <- as.POSIXct(hr_calories$ActivityHour, format = "%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+daily_sleep$SleepDay <- as.POSIXct(daily_sleep$SleepDay, format = "%m/%d/%Y %I:%M", tz=Sys.timezone())
+```
+```{r rename the date to ActivityDate as uniform column names}
+daily_sleep <- daily_sleep %>%
+  rename(ActivityDate = SleepDay)
+head(daily_sleep) #verifying if the change is commited.
+```
+
+##Descriptive Data Analysis 
+Let’s have a look at summary statistics of the datasets:
+```{r}
+colnames(daily_activity)
+daily_activity %>%
+  select(TotalSteps,
+         TotalDistance,
+         SedentaryMinutes, Calories) %>%
+  summary()
+
+daily_activity %>% 
+  select(VeryActiveMinutes, 
+         FairlyActiveMinutes , 
+         LightlyActiveMinutes) %>% 
+  summary()
+
+colnames(daily_sleep)
+daily_sleep %>%
+  select(TotalSleepRecords,
+         TotalMinutesAsleep,
+         TotalTimeInBed) %>%
+  summary()
+
+hr_calories %>%
+  select(hr_Calories = Calories) %>%
+  summary()
+
+hr_intensity %>%
+  select(hr_Intensity = TotalIntensity) %>%
+  summary()
+```
+#Findings:
+###Physical Activity Levels: 
+The mean total steps per day is approximately 7638, with a wide range from 0 to 36019 steps.
+Sedentary minutes have a mean of 991.2 minutes ( ~ 17 hrs), with a median of 1057.5 minutes ( ~ 18 hrs). This suggests that, on average, individuals spend a significant portion of their day in sedentary activities.
+Sedentary activities involve little to no physical movement and typically result in low energy expenditure like desk job in work, prolonged periods of gaming on computer or mobile phones, reading, movies, commuting in car for longer periods etc.
+
+###Sleep Patterns: 
+The mean total minutes asleep per night is approximately 419.5, with a median of 433 minutes. The median total time spent in bed is around 463 minutes, suggesting that individuals spend a significant portion of time in bed, even if not all of it is spent asleep.
+Caloric Expenditure: The mean calorie expenditure is 2304, with a median of 2134 calories. This suggests that, on average, individuals are burning a considerable amount of energy throughout the day.
+
+###The mean hourly calorie burn (hr_Calories)
+is 97.39, indicating the average rate at which calories are burned per hour.
+###Activity Intensity: 
+The median number of Very Active Minutes is 4, with a mean of 21.16 minutes, indicating that while some individuals engage in very active activities, the average duration is relatively low.
+Lightly Active Minutes have a mean of 192.8, with a median of 199 minutes, suggesting that individuals spend a significant portion of their day in light physical activity.
+Fairly Active Minutes have a mean of 13.56, indicating that individuals engage in moderate-intensity activities for a relatively short duration on average.
+
+##Plotting a few explorations:
+Long findings like from Descriptive Analysis above can be overwheling to gain insights from. However, visualizing the findings help connect the dots and create a clearer picture.
+
+**ggplot fucntion in ggplot2 package in R by default removes the empty/blanks values when plotting for completeness of the data.**
+```{r}
+# inspect the relationship between steps taken and sedentary minutes
+ggplot(daily_activity, aes(x=TotalSteps, y=SedentaryMinutes, color = LightlyActiveMinutes)) +
+  geom_point() + geom_smooth() + geom_jitter() + labs(title="Total Steps vs Sedentary Minutes")
+
+# inspect the relationship between steps taken and Calories burned minutes
+ggplot(daily_activity, aes(x=TotalSteps, y=Calories)) +
+  geom_point() + geom_smooth() + geom_jitter() + labs(title="Total Steps vs Calories")
+```
+*The correlation between total steps, sedentary minutes, and calories expenditure is evident: 
+as activity levels increase, so does calorie expenditure, indicative of a healthier lifestyle. This data is clearly backed up by highlighted light activity points as they are in majority than the others.
+These findings from distribution charts above suggest that Bellabeat smart devices could leverage this insight to encourage users to lead more active lifestyles and reduce sedentary behavior.
+
+Lets Explore the Coorelation between Total Sleep vs Bed time. 
+```{r Inspect the correlation between Total sleep and Total Bedtime}
+ggplot(daily_sleep, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) +
+  geom_point() + geom_jitter() + labs(title = "Sleep minutes vs Bed Time") 
+```
+The scatter plot is surprisingly linear for Total minutes sleep and Total time in Bed. The points population is dense around 400-500 mins scale.
+This could help inform Bellabeat product developement for users to improve their sleep through in app notification or by device beeping sound.
+
+###Consolidating several dataframes into one enhances the breadth of the view, enabling the derivation of actionable insights:
+```{r}
+complete_activity <- merge(daily_activity, daily_sleep, by = 'Id', all=TRUE)
+glimpse(complete_activity)
+hr_calories_intensity <- merge(hr_calories, hr_intensity, by = c("Id","ActivityHour"))
+```
+Now Check the Merged Data tables
+```{r check the merged dataframe}
+head(complete_activity)
+tail(complete_activity)
+nrow(complete_activity)
+
+head(hr_calories_intensity)
+tail(hr_calories_intensity)
+nrow(hr_calories_intensity)
+```
+```{r Also, check the data frame by distinct id}
+
+n_distinct(complete_activity$Id)
+n_distinct(hr_calories_intensity$Id)
+```
+#Diving deeper into Visual Analytics
+###With the merged data frames now consolidated and expanded, a wealth of comprehensive insights can be extracted from the enriched dataset.
+Inspect the correlation between daily sleep and sedentary minutes...
+```{r echo=False, paged.print=FALSE}
+ggplot(data = complete_activity, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) +
+  geom_point() + 
+  geom_smooth(formula = y ~ x, method = "lm") + 
+  labs(title = "Sleep vs Sedentary minutes")
+```
+Before delving into insights from the distribution chart, let's consider The Centers for Disease Control and Prevention (CDC)'s recommendations for ideal fitness stats among adults to promote a healthier lifestyle.
+Based on CDC surveys, adults are encouraged to achieve between 5000 and 10000 total steps per day. For optimal sleep, adults are advised to aim for 7 to 9 hours, approximately 400 to 600 minutes, each night.
+*Analysis of the plot:
+From the sleep against sedentary distribution, the negative relationship between can be clearly seen between Sedentary Minutes and Sleep time.
+The bulk of data points within the interquartile range of the box plot align with CDC recommendations, suggesting that most of the time users exhibit behaviors conducive to a healthy and active lifestyle.
+However, it cannot also be ignored that the there are significant data points of users that might result them in leading poor/unhealthy lifestyle.
+These insights from CDC recommendations and the chart present an opportunity for Bellabeat to promote consumer health and reduce sedentary behavior and strengthen their loyalty and marketing strategy.
+
+### Inspect the relationship between calories and intensity in day...
+```{r}
+
+ggplot(hr_calories_intensity, aes(x=TotalIntensity, y=Calories)) +
+  geom_point(color = " dark blue") + 
+  labs(title = "Intensity vs Calories")
+```
+###Inspect the same for individual variable per hour
+```{r}
+
+hr_calories_intensity %>%
+  mutate(Hours = format(as.POSIXct(ActivityHour), format = "%H:%M:%S")) %>% # Extract hour from time stamp..
+  mutate(Id = as.character(Id)) %>%
+  ggplot(aes(x = Hours, y = AverageIntensity, fill = Id)) +
+  geom_col() + 
+  labs(title = "Average Intensity vs Time") + 
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+The chart might seem overwhelming initially because each of the 30 individuals is now represented by a single column per hour. However, this adjustment isn't about crunching individual values; it's about providing a broader context to understand the insights communicated by the chart. Each column represents a collective picture for that specific hour, offering a more holistic view of the data.
+
+*Analysis of the plot:
+The chart reveals a noticeable surge in activity starting from 5 a.m. and peaking at 10 a.m. This uptick suggests that users during this time slot might be individuals engaging in morning workouts or white collars.
+
+The afternoon hours exhibit high intensity, likely due to people being occupied with work responsibilities during this time. This observation is corroborated by the typical traffic patterns in cities, which align with the data.
+
+During the evening hours, particularly from 5 p.m. to 7 p.m., the data shows another significant spike. This pattern implies that users at this time may be participating in evening walks, gym sessions, or other outdoor activities.
+
+These insights present an opportunity for Bellabeat to align its products and marketing strategy with promoting daily exercise and fostering a healthier, more positive lifestyle among consumers.
+
+Conclusions:
+
+Final conclusion from all the datasets collected and analyzed in this Case study:
+
+In conclusion, the analysis of the data highlights several key insights into individuals' daily routines and health behaviors. Sedentary activities are prevalent, indicating a need for interventions to promote more movement throughout the day. Despite spending a significant amount of time in bed, not all of it is utilized for sleep, suggesting potential areas for improving sleep quality. Caloric expenditure data underscores the importance of light and moderate intensity activities in overall energy expenditure.
+
+Furthermore, a clear correlation between activity levels, sedentary behavior, and calorie expenditure suggests that increasing physical activity can lead to a healthier lifestyle. The afternoon and evening emerge as the busiest periods for users, indicating opportunities for promoting exercise and activity during these times, including evening workouts.
+
+Importantly, the positive correlation between total steps and sleep duration suggests that physical activity may have a beneficial impact on sleep patterns. Overall, these insights provide valuable guidance for developing interventions and strategies to promote healthier habits and improve overall well-being.
+
+Recommendations:
+The main motto of Bellabeat revolves around harnessing technology to empower and educate women about their well-being. Through this case study, the utilization of data has proven to be a successful strategy, paving the way for further market expansion. The recommendations derived from valuable and actionable insights gleaned from the data hold the promise of transforming women into some of the most health-conscious individuals globally. By leveraging these insights, Bellabeat can continue to develop innovative products and services that cater specifically to the unique needs and preferences of women, ultimately fostering a community of empowered and proactive individuals striving for better health and wellness.
+
+Note: Additional data that could've been analyzed to gain more actionable insights
+
++ Incorporating an age column into the user data would allow for grouping users according to their age demographics. This segmentation could provide valuable insights into how different age groups engage with the product and how their health behaviors vary based on age.
+
++ Including fitness data from other genders would enable a comparative analysis of performance, providing more accurate insights for Bellabeat's product development. This comparative approach would help identify any gender-specific trends or preferences in health behaviors, allowing for more targeted and inclusive product enhancements.
+
++ Integrating data on users' nutritional intake, such as calorie consumption and macronutrient breakdown, could offer a more holistic view of users' health behaviors. Understanding dietary habits alongside activity levels could provide insights into overall lifestyle choices and facilitate personalized recommendations for diet and exercise optimization.
+
++ Collecting data on users' sleep environment, including factors like ambient light, noise levels, and room temperature, could enhance the analysis of sleep quality and identify potential environmental factors affecting sleep patterns. This information could inform recommendations for optimizing sleep environments to improve overall sleep health.
+
++ Informing Bellabeat app and Marketing Strategies:
+Bellabeat smart devices could leverage this insight to encourage users to lead more active lifestyles and reduce sedentary behavior.
+
++ Bellabeat application could encourage users on sleep quality and environment by providing in-app suggestions.
+If users want to lose weight, it’s probably a good idea to control daily calorie consumption. Bellabeat can suggest some ideas for low-calorie lunch and dinner.
+
++ For online platforms: Launch campaigns on digital media, social platforms and in-app notification to promote the benefits of the various products, Bellabeat has to offer during the time where people shows more sedentary behavior.
+
++ For offine marketing: Launch daily campaings during evening where people are the most active outside, promoting products on advertising billboards with daily motivational quotes.
+
++ Invest in technology and infrastructure improvements to enhance the user experience for members and to streamline the membership signup process and to improve overall user satisfaction.
+
++ By implementing these recommendations, Bellabeat can continue to empower women to prioritize their health and well-being, while also growing its brand presence and market share in the health tech industry.
+
+
+****Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.****
